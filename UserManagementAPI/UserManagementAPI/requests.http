@@ -1,0 +1,162 @@
+@baseUrl = https://localhost:7208
+@token = my-secret-token
+
+### Authentication tests
+
+### Valid token
+GET {{baseUrl}}/users?page=1&pageSize=2
+Authorization: Bearer {{token}}
+
+
+### Invalid token - expected 401
+GET {{baseUrl}}/users
+Authorization: Bearer wrong-token
+
+
+### Missing token - expected 401
+GET {{baseUrl}}/users
+
+
+### Invalid authentication scheme - expected 401
+GET {{baseUrl}}/users
+Authorization: Basic {{token}}
+
+
+### Get all users - expected 200
+GET {{baseUrl}}/users?page=1&pageSize=2
+Authorization: Bearer {{token}}
+
+
+### Invalid page - expected 400
+GET {{baseUrl}}/users?page=0&pageSize=2
+Authorization: Bearer {{token}}
+
+
+### Invalid page size - expected 400
+GET {{baseUrl}}/users?page=1&pageSize=0
+Authorization: Bearer {{token}}
+
+
+### Page size too large - expected 400
+GET {{baseUrl}}/users?page=1&pageSize=500
+Authorization: Bearer {{token}}
+
+
+### Get existing user - expected 200
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{token}}
+
+
+### Get non-existent user - expected 404
+GET {{baseUrl}}/users/999
+Authorization: Bearer {{token}}
+
+
+### Search user by name
+GET {{baseUrl}}/users/search?name=Anna
+Authorization: Bearer {{token}}
+
+
+### Search user by email
+GET {{baseUrl}}/users/search?email=gmail.com
+Authorization: Bearer {{token}}
+
+
+### Get user names
+GET {{baseUrl}}/users/names
+Authorization: Bearer {{token}}
+
+
+### Create valid user - expected 201
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Chris",
+  "email": "chris@gmail.com"
+}
+
+
+### Empty name - expected 400
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "email": "john@gmail.com"
+}
+
+
+### Empty email - expected 400
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "John",
+  "email": ""
+}
+
+
+### Invalid email - expected 400
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Invalid Email User",
+  "email": "not-an-email"
+}
+
+
+### Update existing user - expected 200
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Bea Updated",
+  "email": "bea@newmail.com"
+}
+
+
+### Update non-existent user - expected 404
+PUT {{baseUrl}}/users/999
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Ghost User",
+  "email": "ghost@gmail.com"
+}
+
+
+### Update with invalid email - expected 400
+PUT {{baseUrl}}/users/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Bea",
+  "email": "wrong-email"
+}
+
+
+### Delete existing user - expected 204
+DELETE {{baseUrl}}/users/1
+Authorization: Bearer {{token}}
+
+
+### Delete non-existent user - expected 404
+DELETE {{baseUrl}}/users/999
+Authorization: Bearer {{token}}
+
+
+
+### 500 Internal Server Error
+### { "error": "Internal server error." }
+
+GET {{baseUrl}}/test-error
+Authorization: Bearer {{token}}
